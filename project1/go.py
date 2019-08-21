@@ -7,18 +7,19 @@ Created on Aug 18, 2019
 import os
 import yaml
 from runpy import run_module
+import sys
 
 
-def getCreds():
-    directory = '..\\creds'
+def getCreds(credFileLocation):
+    credFileLocation
     filename = 'project1'
-    with open(directory + '\\' + filename, mode='r') as credFile:
+    with open(credFileLocation + '\\' + filename, mode='r') as credFile:
         contents = yaml.safe_load(credFile)
     return contents
 
 
 if __name__ == '__main__':
-    creds = getCreds()
+    creds = getCreds(sys.argv[1])
     os.environ['DATABASE_URL'] = creds['URI']
     os.environ['FLASK_APP'] = 'application.py'
     os.environ['FLASK_DEBUG'] = '1'

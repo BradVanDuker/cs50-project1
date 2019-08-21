@@ -22,6 +22,11 @@ Session(app)
 db = DataStore(os.getenv("DATABASE_URL"))
 
 
+def renderPage(pageName, **args):
+    args['username'] = session.get('username', None)
+    return render_template(pageName, **args)
+
+
 @app.route("/")
 def index():
     return "Project 1: TODO"
@@ -29,7 +34,7 @@ def index():
 
 @app.route("/login", methods=['get'])
 def loginGet(errMsg=None):
-    return render_template('login.html', errMsg=errMsg)
+    return renderPage('login.html', errMsg=errMsg)
 
 
 @app.route('/login', methods=['post'])
@@ -37,19 +42,21 @@ def loginPost():
     name = request.form.get('name')
     results = db.getUserDetails(name)
     if results.rowcount == 1 and request.form.get('password') == results.fetchone()['password']:
-        return render_template('landing.html')
+        session['username'] = name
+        return renderPage('landing.html')
     else:
         return loginGet('Invalid username or password.')
 
 
 @app.route("/logout")
 def logOut():
-    return render_template('logout.html')
+    session.pop('username', None)
+    return renderPage('logout.html')
 
 
 @app.route('/register', methods=['get'])
 def registerGet():
-    return render_template('register.html')
+    return renderPage('register.html')
 
 
 @app.route('/register', methods=['post'])
@@ -61,19 +68,22 @@ def registerPost():
     
     # check username is valid
     if not name:
-        return render_template(registerPage, errMsg="Invalid user name.")
+        return renderPage(registerPage, errMsg="Invalid user name.")
     # check if user name already exists
     elif db.getUserDetails(name).rowcount != 0:        
-        return render_template(registerPage, errMsg="User name already exists.  Please choose another.")
+        return renderPage(registerPage, errMsg="User name already exists.  Please choose another.")
     # check password is valid
     elif not password:
-        return render_template(registerPage, errMsg="Invalid Password")
+        return renderPage(registerPage, errMsg="Invalid Password")
     else:
         # create user in database
         if db.addUser(name, password):
-            return render_template('registrationComplete.html')
+            return renderPage('registrationComplete.html')
         else:
-            return render_template(registerPage, errMsg="User name already exists.  Please choose another. ")
-    
+            return renderPage(registerPage, errMsg="User name already exists.  Please choose another. ")
+
+
+
+
         
 app.run()
