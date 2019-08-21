@@ -1,0 +1,15 @@
+{% extends "template.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block body %}
+<form action="/register" method="post">
+	<p>Name</p>
+	<input type="text" name="name"><br>
+	<p>Password</p>
+	<input type="password" name="password"><br>
+	<input type="submit" value="Register"> 
+</form>
+{% endblock %}
