@@ -8,11 +8,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.exc import InvalidRequestError
 
+
 class DataStore(object):
     '''
     classdocs
     '''
-    db = None
+    
     
     def getUserDetails(self, name):
         return self.db.execute("SELECT * FROM users WHERE user_name = :name", {'name':name})
@@ -46,10 +47,31 @@ class DataStore(object):
         pass
 
 
+    def searchForBooks(self, author=None, title=None, isbn=None):
+        if not (author or title or isbn):
+            return []
+        
+        searchStr = 'SELECT * from books WHERE '
+        concator = ' AND '
+        params = {'author':author, 'title':title, 'isbn':isbn}
+        inputsToBeEscaped = {}
+        for fieldName, value in params.items():
+            if value:
+                searchStr += f"{fieldName} ILIKE :{fieldName}" + concator
+                inputsToBeEscaped[fieldName] = '%' + value + '%'
+        searchStr = searchStr.rstrip(concator) + ';'
+        results = self.db.execute(searchStr, inputsToBeEscaped) 
+        return results
+    
+    
+    def getBookDetails(self, isbn):
+        searchStr = 'Select * FROM books WHERE isbn=:isbn'
+        return self.db.execute(searchStr, {'isbn':isbn}).first()
+    
+
     def __init__(self, connectionString):
         '''
         Constructor
         '''
         engine = create_engine(connectionString)
-        self.db = scoped_session(sessionmaker(bind=engine))
-        
+        self.db = scoped_session(sessionmaker(bind=engine))        

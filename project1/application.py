@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session
+from flask import Flask, session, redirect
 from flask_session import Session
 from flask.templating import render_template
 from flask import request
@@ -83,7 +83,21 @@ def registerPost():
             return renderPage(registerPage, errMsg="User name already exists.  Please choose another. ")
 
 
-
-
+@app.route('/booksearch', methods=['get', 'post'])
+def booksearch():
+    params = {}
+    for fieldName in ['author', 'title', 'isbn']:
+        value = request.form.get(fieldName)
+        if value:
+            params[fieldName] = value
+    results = db.searchForBooks(**params)
+    return renderPage('booksearch.html', results=results)
+    
         
+@app.route('/books/<string:isbn>')
+def bookInfo(isbn):
+    results = db.getBookDetails(isbn)
+    return  renderPage('bookInfo.html', results=results )
+
+
 app.run()

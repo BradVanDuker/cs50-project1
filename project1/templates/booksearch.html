@@ -1,0 +1,42 @@
+{% extends "template.html" %}
+
+{% block title %}
+Search for a book
+{% endblock %}
+
+{% block body %}
+<div class="form-group">
+<form method="post">
+Title  <input type="text" name="title"><br>
+Author  <input type="text" name="author"><br>
+ISBN  <input type="text" name="isbn"><br>
+<input type="submit" value="Submit">
+</form>
+</div>
+
+
+<h3>Results</h3>
+{% set col=3 %}
+<div class="table">
+	<div class="row table-header">
+		<div class="cell col-{{col}}">Title</div>
+		<div class="cell col-{{col}}">Author</div>
+		<div class="cell col-{{col}}">ISBN</div>
+	</div>
+{% if results %}
+	<div id="results">
+		{% for book in results %}
+			<div class="row" onclick="location.href='/books/{{book.isbn}}';">
+				<div class="cell col-{{col}}">{{ book.title }}</div>
+				<div class="cell col-{{col}}">{{ book.author }}</div>
+				<div class="cell col-{{col}}">{{ book.isbn }}</div>
+			</div>
+		{% endfor %}
+	</div>
+{% else %}
+<p>Reults not found</p>
+{% endif %}
+
+</div>
+
+{% endblock %}

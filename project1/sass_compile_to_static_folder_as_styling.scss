@@ -1,0 +1,11 @@
+$selectColor: lightgrey;
+
+.row:hover {
+	background-color: $selectColor;
+	cursor: pointer; 
+}
+
+.table-header {
+	font-weight: bold;
+	font-size: 125% 
+}
