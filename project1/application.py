@@ -5,6 +5,7 @@ from flask_session import Session
 from flask.templating import render_template
 from flask import request
 from dataStore import DataStore
+from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
@@ -41,16 +42,20 @@ def loginGet(errMsg=None):
 def loginPost():
     name = request.form.get('name')
     results = db.getUserDetails(name)
-    if results.rowcount == 1 and request.form.get('password') == results.fetchone()['password']:
-        session['username'] = name
-        return renderPage('landing.html')
-    else:
-        return loginGet('Invalid username or password.')
+    if results.rowcount == 1:
+        r = results.first()
+        if request.form.get('password') == r['password']:
+            print(results)
+            session['username'] = name
+            session['userId'] = r['id']
+            return redirect('booksearch')
+    return loginGet('Invalid username or password.')
 
 
 @app.route("/logout")
 def logOut():
     session.pop('username', None)
+    session.pop('userId', None)
     return renderPage('logout.html')
 
 
@@ -92,12 +97,35 @@ def booksearch():
             params[fieldName] = value
     results = db.searchForBooks(**params)
     return renderPage('booksearch.html', results=results)
-    
-        
-@app.route('/books/<string:isbn>')
-def bookInfo(isbn):
-    results = db.getBookDetails(isbn)
-    return  renderPage('bookInfo.html', results=results )
 
+
+@app.route('/books/<string:isbn>', methods=['get'])
+def bookInfo(isbn):
+    details = db.getBookDetails(isbn)
+    #results = {key:value for key, value in details.items()}
+    reviews = db.getReviews(isbn)
+    cannotSubmit = False
+    for r in reviews:
+        if r['user_id'] == session['userId']:
+            cannotSubmit = True
+            break
+    return  renderPage('bookInfo.html', results=details, reviews=reviews, cannotSubmit=cannotSubmit)
+
+
+@app.route('/submitReview', methods=['post'])
+def bookReviewSubmission():
+    try:
+        params = {pName:request.form.get(pName) for pName in ['reviewText', 'rating', 'isbn']}
+        params['userId'] = session['userId']
+        db.saveReview(**params)
+        return renderPage('submissionSuccess.html')
+    except IntegrityError as e:
+        if str(e).lower().find("duplicate") > -1:
+            errMsg = "Oops!  You may only submit one review per book."
+        else:
+            errMsg = "You must supply all required information before we can save your review."
+    except Exception as e:
+        errMsg = str(e)
+    return renderPage('template.html', errMsg=errMsg) 
 
 app.run()

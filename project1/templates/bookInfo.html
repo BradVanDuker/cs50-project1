@@ -1,7 +1,36 @@
 {% extends "template.html" %}
 
+{% block title %}
+	
+{% endblock %}
+
 {% block body %}
-Title:  {{ results.title }}<br>
-Author:  {{ results.author }}<br>
-ISBN:  {{ results.isbn }}<br>
+<h3>Details</h3>
+<div class="row"><div class="detail-attr-label col-2">Title</div>{{ results.title }}</div>
+<div class="row"><div class="detail-attr-label col-2">Author</div>{{ results.author }}</div>
+<div class="row"><div class="detail-attr-label col-2">ISBN</div>{{ results.isbn }}</div>
+
+<h3>Reviews</h3>
+{% if reviews %}
+	{% for r in reviews %}
+		<p>User id{{ r.user_id }} gave the book {{ r.rating }} out of 5 on {{ r.creationDate }}</p>
+		<div class="review-entry">{{ r.entry }}</div><br>
+	{% endfor %}
+{% else %}
+	<p>Be the first to review!</p>
+{% endif %}
+
+{% if cannotSubmit == False %}
+<p>Submit a review!</p>
+<h4>Rating</h4>
+<form name='submission' method='post' action='/submitReview'>
+	{% for i in range(0, 6) %}
+		<div class="radioOption"><input type="radio" name="rating" value="{{i}}" required>{{i}}</div>
+	{% endfor %}<br>
+	<h4>Your Review</h4>
+	<input type='text' name='reviewText' required><br>
+	<input type="hidden" name="isbn" value="{{results.isbn}}">
+	<input type="submit" value="Submit Review">
+</form>
+{% endif %}
 {% endblock %}

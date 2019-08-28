@@ -68,10 +68,25 @@ class DataStore(object):
         searchStr = 'Select * FROM books WHERE isbn=:isbn'
         return self.db.execute(searchStr, {'isbn':isbn}).first()
     
+    
+    def saveReview(self, userId, isbn, rating, reviewText):
+        bookId = self.searchForBooks(isbn=isbn).first()['id']
+        sqlStr = 'INSERT INTO reviews (book_id, user_id, rating, entry) VALUES '
+        sqlStr += '(:bookId, :userId, :rating, :reviewText);'
+        self.db.execute(sqlStr, {'bookId':bookId, 'userId':userId, 'rating':rating, 'reviewText':reviewText})
+        self.db.commit()
+    
+    
+    def getReviews(self, isbn):
+        bookDetails = self.getBookDetails(isbn)
+        sqlStr = """SELECT reviews.user_id, reviews.rating, reviews.entry, reviews.creation_date 
+        FROM reviews WHERE reviews.book_id=:book_id"""
+        return self.db.execute(sqlStr, {'book_id':bookDetails['id']}).fetchall()
+
 
     def __init__(self, connectionString):
         '''
         Constructor
         '''
         engine = create_engine(connectionString)
-        self.db = scoped_session(sessionmaker(bind=engine))        
+        self.db = scoped_session(sessionmaker(bind=engine))

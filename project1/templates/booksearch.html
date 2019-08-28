@@ -7,9 +7,9 @@ Search for a book
 {% block body %}
 <div class="form-group">
 <form method="post">
-Title  <input type="text" name="title"><br>
-Author  <input type="text" name="author"><br>
-ISBN  <input type="text" name="isbn"><br>
+<div class="row"><div class="detail-attr-label col-1">Title</div><input type="text" name="title"></div>
+<div class="row"><div class="detail-attr-label col-1">Author</div><input type="text" name="author"></div>
+<div class="row"><div class="detail-attr-label col-1">ISBN</div><input type="text" name="isbn"></div>
 <input type="submit" value="Submit">
 </form>
 </div>
@@ -23,7 +23,7 @@ ISBN  <input type="text" name="isbn"><br>
 		<div class="cell col-{{col}}">Author</div>
 		<div class="cell col-{{col}}">ISBN</div>
 	</div>
-{% if results %}
+{% if results and (results.rowcount > 0) %}
 	<div id="results">
 		{% for book in results %}
 			<div class="row" onclick="location.href='/books/{{book.isbn}}';">

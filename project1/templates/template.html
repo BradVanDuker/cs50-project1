@@ -6,20 +6,22 @@
 		<link rel="stylesheet" href="/static/stylings.css">
 	</head>
 	<body>
-		{% if username %}
-			<div class="user-bar">
-				<p>Hello, {{ username }}</p>
-				<p><a href="./logout">Click here to log out.</a></p>
-			</div>
-			
-		{% endif %}
-		<div><h1>{% block title %}{% endblock %}</h1></div>
 		<div class="container">
-			{% block body %}
-			{% endblock %}
-			{% if errMsg %}
-			<div id="errMsg" class="alert alert-danger">{{ errMsg }}</div>
+			{% if username %}
+				<div class="user-bar row">
+					<div class="user-name col order-1"><p>Hello, {{ username }}</p></div>
+					<div class="logout col order-12"><p><a href="/logout">Click here to log out.</a></p></div>
+				</div>
+				
 			{% endif %}
+			<div class="title-block"><h1>{% block title %}{% endblock %}</h1></div>
+			<div class="container">
+				{% block body %}
+				{% endblock %}
+				{% if errMsg %}
+				<div id="errMsg" class="alert alert-danger">{{ errMsg }}</div>
+				{% endif %}
+			</div>
 		</div>
 	</body>
 </html>
