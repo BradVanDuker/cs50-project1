@@ -11,6 +11,15 @@
 <div class="row"><div class="detail-attr-label col-2">ISBN</div>{{ results.isbn }}</div>
 
 <h3>Reviews</h3>
+
+<p>
+{% if goodreads %}
+	{{ goodreads[0] }} goodreads.com users gave this book an average rating of {{ goodreads[1] }} out of 5.
+{% elif results.isbn %}
+	Goodreads.com data unavailable
+{% endif %}
+</p>
+
 {% if reviews %}
 	{% for r in reviews %}
 		<p>User id{{ r.user_id }} gave the book {{ r.rating }} out of 5 on {{ r.creationDate }}</p>

@@ -1,4 +1,4 @@
-.row:hover {
+.table .row:hover {
   background-color: lightgrey;
   cursor: pointer;
 }

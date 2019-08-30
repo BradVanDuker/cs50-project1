@@ -6,6 +6,7 @@ from flask.templating import render_template
 from flask import request
 from dataStore import DataStore
 from sqlalchemy.exc import IntegrityError
+from apiHandler import APIHandler
 
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ Session(app)
 # Set up database
 db = DataStore(os.getenv("DATABASE_URL"))
 
+apiHandler = APIHandler()
 
 def renderPage(pageName, **args):
     args['username'] = session.get('username', None)
@@ -109,7 +111,12 @@ def bookInfo(isbn):
         if r['user_id'] == session['userId']:
             cannotSubmit = True
             break
-    return  renderPage('bookInfo.html', results=details, reviews=reviews, cannotSubmit=cannotSubmit)
+    try:
+        goodreads = apiHandler.getBookRating(isbn)
+    except Exception as e:
+        goodreads = None
+        
+    return  renderPage('bookInfo.html', results=details, reviews=reviews, cannotSubmit=cannotSubmit, goodreads=goodreads)
 
 
 @app.route('/submitReview', methods=['post'])
@@ -127,5 +134,6 @@ def bookReviewSubmission():
     except Exception as e:
         errMsg = str(e)
     return renderPage('template.html', errMsg=errMsg) 
+
 
 app.run()
