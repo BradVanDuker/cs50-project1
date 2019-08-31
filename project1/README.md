@@ -18,7 +18,7 @@ Web Programming with Python and JavaScript
   * [x] consisting of a rating on a scale of 1 to 5 
   * [x] a text component to the review where the user can write their opinion about a book.
   * [x] Users should not be able to submit multiple reviews for the same book.
-* [ ] **Goodreads Review Data:** On your book page, you should also display (if available) the average rating and number of ratings the work has received from Goodreads.
+* [x] **Goodreads Review Data:** On your book page, you should also display (if available) the average rating and number of ratings the work has received from Goodreads.
 * [ ] **API Access:** If users make a GET request to your website’s /api/<isbn> route, where <isbn> is an ISBN number, your website should return a JSON response containing the book’s title, author, publication date, ISBN number, review count, and average score.  If the requested ISBN number isn’t in your database, your website should return a 404 error.
 * [ ] You should be using raw SQL commands (as via SQLAlchemy’s execute method) in order to make database queries. You should not use the SQLAlchemy ORM (if familiar with it) for this project.
 * [ ] In README.md, include a short writeup describing your project, what’s contained in each file, and (optionally) any other additional information the staff should know about your project.
@@ -29,6 +29,8 @@ Other
 * [ ] add error message to book details page when a user submits an incomplete review
 
 # Dependencies
+requests library
+yaml library
 
 # Other
 * The file go.py is used to set environment variables and then run the application.py script.  This saves painful setup and allows me to use an IDE and debugger.

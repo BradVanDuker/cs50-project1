@@ -9,7 +9,7 @@ from go import getCreds
 import sys
 import datetime
 
-class APIHandler(object):
+class GoodreadHandler(object):    
     '''
     classdocs
     '''
@@ -21,23 +21,23 @@ class APIHandler(object):
 
     def __init__(self):
         creds = getCreds(sys.argv[1], "goodreads")
-        APIHandler._key = creds['key']
+        GoodreadHandler._key = creds['key']
         
     
     @classmethod
     def _isOldEnough(self):
-        if APIHandler._lastAccessTime is None:
+        if GoodreadHandler._lastAccessTime is None:
             return True
-        if APIHandler._lastAccessTime - datetime.datetime.now() < datetime.timedelta(seconds=1):
+        if GoodreadHandler._lastAccessTime - datetime.datetime.now() < datetime.timedelta(seconds=1):
             return False
         return True
     
     
     def getBookRating(self, isbn):
-        if not APIHandler._isOldEnough():
+        if not GoodreadHandler._isOldEnough():
             raise Exception("API request made too soon.  Wait at least one minute between requests.")
         
-        response = requests.get(self._baseURL + 'book/review_counts.json', params={"key": APIHandler._key, "isbns":isbn})
+        response = requests.get(self._baseURL + 'book/review_counts.json', params={"key": GoodreadHandler._key, "isbns":isbn})
         if response.status_code != 200:
             raise Exception("Goodbooks API unavailable")
         

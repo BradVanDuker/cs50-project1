@@ -1,12 +1,12 @@
 import os
 
-from flask import Flask, session, redirect
+from flask import Flask, session, redirect, make_response
 from flask_session import Session
 from flask.templating import render_template
 from flask import request
 from dataStore import DataStore
 from sqlalchemy.exc import IntegrityError
-from apiHandler import APIHandler
+from goodreadHandler import GoodreadHandler
 
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ Session(app)
 # Set up database
 db = DataStore(os.getenv("DATABASE_URL"))
 
-apiHandler = APIHandler()
+goodread = GoodreadHandler()
 
 def renderPage(pageName, **args):
     args['username'] = session.get('username', None)
@@ -112,11 +112,11 @@ def bookInfo(isbn):
             cannotSubmit = True
             break
     try:
-        goodreads = apiHandler.getBookRating(isbn)
+        gr = goodread.getBookRating(isbn)
     except Exception as e:
-        goodreads = None
+        gr = None
         
-    return  renderPage('bookInfo.html', results=details, reviews=reviews, cannotSubmit=cannotSubmit, goodreads=goodreads)
+    return  renderPage('bookInfo.html', results=details, reviews=reviews, cannotSubmit=cannotSubmit, goodreads=gr)
 
 
 @app.route('/submitReview', methods=['post'])
@@ -134,6 +134,33 @@ def bookReviewSubmission():
     except Exception as e:
         errMsg = str(e)
     return renderPage('template.html', errMsg=errMsg) 
+
+
+@app.route('/api/<string:isbn>')
+def api_isbn(isbn):
+    status = 200
+    try:
+        details = db.getBookDetails(isbn)
+        if details:
+            details = {k:v for k, v in details.items()}
+            details.pop('id')
+            try:
+                reviews = goodread.getBookRating(isbn)
+                details['review_count'] = reviews[0]
+                details['average_score'] = reviews[1]
+            except Exception:
+                details['review_count'] = None
+                details['average_score'] = None
+        else:
+            details = ""
+            status = 404
+    except Exception:
+        details = ""
+        status = 404
+    response = make_response(details)
+    response.status_code = status
+    return response
+
 
 
 app.run()
