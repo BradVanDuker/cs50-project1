@@ -79,8 +79,9 @@ class DataStore(object):
     
     def getReviews(self, isbn):
         bookDetails = self.getBookDetails(isbn)
-        sqlStr = """SELECT reviews.user_id, reviews.rating, reviews.entry, reviews.creation_date 
-        FROM reviews WHERE reviews.book_id=:book_id"""
+        sqlStr = """SELECT reviews.user_id, reviews.rating, reviews.entry, reviews.creation_date, users.user_name 
+        FROM reviews INNER JOIN users ON reviews.user_id = users.id
+        WHERE reviews.book_id=:book_id"""
         return self.db.execute(sqlStr, {'book_id':bookDetails['id']}).fetchall()
 
 

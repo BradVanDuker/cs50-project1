@@ -7,13 +7,14 @@
 	</head>
 	<body>
 		<div class="container">
+		<div class="user-bar row">
 			{% if username %}
-				<div class="user-bar row">
-					<div class="user-name col order-1"><p>Hello, {{ username }}</p></div>
-					<div class="logout col order-12"><p><a href="/logout">Click here to log out.</a></p></div>
-				</div>
-				
+				<div class="user-name col order-1"><p>Hello, {{ username }}</p></div>
+				<div class="logout col order-12"><p><a href="/logout">Click here to log out.</a></p></div>
+			{% else %}
+				<div class="login col order-12"><p><a href="/login">Sign In</a></div>
 			{% endif %}
+		</div>
 			<div class="title-block"><h1>{% block title %}{% endblock %}</h1></div>
 			<div class="container">
 				{% block body %}

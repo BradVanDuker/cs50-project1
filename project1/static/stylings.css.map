@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["../sass_compile_to_static_folder_as_styling.scss"],"names":[],"mappings":"AAEA;EACC,kBAHa;EAIb;;;AAGD;EACC;EACA","file":"stylings.css"}
+{"version":3,"sourceRoot":"","sources":["../sass_compile_to_static_folder_as_styling.scss"],"names":[],"mappings":"AAEA;EACC,kBAHa;EAIb;;;AAGD;EACC;EACA;;;AAGD;EACC;EACA;EACA,cAfa;EAgBb;;;AAGD;EACC;;;AAGD;EACC;;;AAGD;EACC;EACA","file":"stylings.css"}

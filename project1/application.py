@@ -32,7 +32,8 @@ def renderPage(pageName, **args):
 
 @app.route("/")
 def index():
-    return "Project 1: TODO"
+    #return "Project 1: TODO"
+    return redirect('booksearch')
 
 
 @app.route("/login", methods=['get'])
@@ -104,18 +105,16 @@ def booksearch():
 @app.route('/books/<string:isbn>', methods=['get'])
 def bookInfo(isbn):
     details = db.getBookDetails(isbn)
-    #results = {key:value for key, value in details.items()}
     reviews = db.getReviews(isbn)
-    cannotSubmit = False
-    for r in reviews:
-        if r['user_id'] == session['userId']:
-            cannotSubmit = True
-            break
+    reviewers = {r['user_id'] for r in reviews}
+    cannotSubmit = True
+    userId = session.get('userId', None)
+    if userId and (userId not in reviewers):
+        cannotSubmit = False
     try:
         gr = goodread.getBookRating(isbn)
-    except Exception as e:
+    except Exception:
         gr = None
-        
     return  renderPage('bookInfo.html', results=details, reviews=reviews, cannotSubmit=cannotSubmit, goodreads=gr)
 
 
@@ -160,7 +159,6 @@ def api_isbn(isbn):
     response = make_response(details)
     response.status_code = status
     return response
-
 
 
 app.run()

@@ -42,5 +42,4 @@ class GoodreadHandler(object):
             raise Exception("Goodbooks API unavailable")
         
         data = response.json()['books'][0]
-        print(data)
         return (data['ratings_count'], data['average_rating'])
