@@ -1,0 +1,7 @@
+Host: databaseURL (e.g. ec2-23-23-228-132.compute-1.amazonaws.com)
+Database: databaseName
+User: userName
+Port: 5432
+Password: databasePassword
+URI: connectionString
+Heroku CLI: herokuCLI
